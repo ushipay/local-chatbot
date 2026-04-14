@@ -13,4 +13,6 @@ dependencies = [
     "faiss-cpu>=1.11",
     "streamlit>=1.40",
     "ddgs>=9.13.0",
+    "urllib3==1.25.0",
+    "jinja2==2.11.2",
 ]
