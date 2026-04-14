@@ -7,5 +7,10 @@ requires-python = ">=3.11"
 dependencies = [
     "langchain>=0.3",
     "langchain-ollama>=1.1",
+    "langchain-community>=0.3",
+    "langgraph>=0.4",
+    "duckduckgo-search>=8.0",
+    "faiss-cpu>=1.11",
     "streamlit>=1.40",
+    "ddgs>=9.13.0",
 ]
