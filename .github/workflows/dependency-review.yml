@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   dependency-review:
@@ -16,4 +17,26 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Dependency Review
+        id: review
         uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: always
+          allow-licenses: MIT, Apache-2.0, BSD-3-Clause, BSD-2-Clause, ISC, PSF-2.0
+
+      - name: Output review results
+        if: always()
+        shell: bash
+        env:
+          VULNERABLE: ${{ steps.review.outputs.vulnerable-changes }}
+          LICENSE: ${{ steps.review.outputs.invalid-license-changes }}
+        run: |
+          echo "## Dependency Review Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Vulnerable Dependencies" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          echo "$VULNERABLE" | jq '.' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "### License Violations" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          echo "$LICENSE" | jq '.' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
