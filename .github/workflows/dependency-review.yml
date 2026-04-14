@@ -19,13 +19,13 @@ jobs:
       - name: Dependency Review
         id: review
         uses: actions/dependency-review-action@v4
+        continue-on-error: true
         with:
           fail-on-severity: moderate
           comment-summary-in-pr: always
           allow-licenses: MIT, Apache-2.0, BSD-3-Clause, BSD-2-Clause, ISC, PSF-2.0
 
       - name: Output review results
-        if: always()
         shell: bash
         env:
           VULNERABLE: ${{ steps.review.outputs.vulnerable-changes }}
@@ -40,3 +40,7 @@ jobs:
           echo '```json' >> "$GITHUB_STEP_SUMMARY"
           echo "$LICENSE" | jq '.' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail if review found issues
+        if: steps.review.outcome == 'failure'
+        run: exit 1
